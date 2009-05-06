@@ -6,25 +6,9 @@
 #  I haven't tried it with RRDTool v1.3.x as I can't compile it on win32. :-)
 #
 #  TODO - not all rrdtool functions have been implemented
-# 
+#
 #  Copyright (c) 2009 Barrie Hill
-#
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software
-#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-#  MA 02110-1301, USA.
-#
-#
+#  License GPL (read LICENSE file for full disclosure)
 #
 #
 class Rrdwrapper
@@ -32,19 +16,19 @@ class Rrdwrapper
   #
   #  Rrdwrapper.new(rrdcmd)
   # === Example
-  #  f = Rrdwrapper.new('D:\projects\rrdtool\rrdtool.exe')
+  #  f = Rrdwrapper.new('D:/projects/rrdtool/rrdtool.exe')
   attr_reader :rrdcmd
-  
+
   # Create a new rrdwrapper object
   #
   # You should set the rrd default font using a command similar to the example
   # below. You may not get text on your graphs if you don't.
   #
-  #  ENV["RRD_DEFAULT_FONT"] = 'D:\projects\rrdtool\DejaVuSansMono-Roman.ttf'
+  #  ENV["RRD_DEFAULT_FONT"] = 'D:/projects/rrdtool/DejaVuSansMono-Roman.ttf'
   #
   # === Example
-  #  ENV["RRD_DEFAULT_FONT"] = 'D:\projects\rrdtool\DejaVuSansMono-Roman.ttf'
-  #  f = Rrdwrapper.new('D:\projects\rrdtool\rrdtool.exe')
+  #  ENV["RRD_DEFAULT_FONT"] = 'D:/projects/rrdtool/DejaVuSansMono-Roman.ttf'
+  #  f = Rrdwrapper.new('D:/projects/rrdtool/rrdtool.exe')
   def initialize(rrdcmd)
     @rrdcmd = rrdcmd
   end
@@ -58,12 +42,12 @@ class Rrdwrapper
   #  Ruby variables can be used.
   # === Example
   #   name = "test"
-  #   rrdpath = '\projects\rrdtool'
-  #   rrddir = "#{rrdpath}\\rra"
+  #   rrdpath = '/projects/rrdtool'
+  #   rrddir = "#{rrdpath}/rra"
   #   rrd = "#{name}.rrd"
   #   start = Time.now.to_i
   #   f.create(
-  #   "#{rrddir}\\#{rrd}",
+  #   "#{rrddir}/#{rrd}",
   #   "--start", "#{start - 1}",
   #   "--step", "300",
   #   "DS:a:GAUGE:600:U:U",
@@ -71,10 +55,10 @@ class Rrdwrapper
   #   "RRA:AVERAGE:0.5:1:300")
   #
   def create(filename,*args)
-    system("#{@rrdcmd} create #{filename} #{args.join(' ')}")
-  rescue Exception => e 
-    puts e.message 
-    puts e.backtrace.inspect 
+    %x{#{@rrdcmd} create #{filename} #{args.join(' ')}}
+  rescue Exception => e
+    puts e.message
+    puts e.backtrace.inspect
   end
 
   # Update a Round Robin Database
@@ -85,17 +69,18 @@ class Rrdwrapper
   #  Ruby variables can be used.
   # === Example
   #   name = "test"
-  #   rrdpath = '\projects\rrdtool'
-  #   rrddir = "#{rrdpath}\\rra"
+  #   rrdpath = '/projects/rrdtool'
+  #   rrddir = "#{rrdpath}/rra"
   #   rrd = "#{name}.rrd"
   #   puts "updating #{rrd}"
   #   start.to_i.step(start.to_i + 300 * 300, 300) { |i|
-  #      f.update("#{rrddir}\\#{rrd}", "#{i}:#{rand(100)}:#{Math.sin(i / 800) * 50 + 50}")
+  #      f.update("#{rrddir}/#{rrd}", "#{i}:#{rand(100)}:#{Math.sin(i / 800) * 50 + 50}")
   #   }
   def update(filename,*args)
-    system("#{@rrdcmd} update #{filename} #{args.join(' ')}")
-  rescue Exception => e 
-    puts e.message 
+     %x{#{@rrdcmd} update #{filename} #{args.join(' ')}}
+     #puts "******* #{@rrdcmd} update #{filename} #{args.join(' ')} ********"
+  rescue Exception => e
+    puts e.message
     puts e.backtrace.inspect
   end
 
@@ -108,55 +93,55 @@ class Rrdwrapper
   #  Ruby variables can be used.
   # === Example
   #   name = "test"
-  #   rrdpath = '\projects\rrdtool'
-  #   rrddir = "#{rrdpath}\\rra"
+  #   rrdpath = '/projects/rrdtool'
+  #   rrddir = "#{rrdpath}/rra"
   #   rrd = "#{name}.rrd"
   #   puts "updating #{rrd}"
   #   start.to_i.step(start.to_i + 300 * 300, 300) { |i|
-  #      f.updatev("#{rrddir}\\#{rrd}", "#{i}:#{rand(100)}:#{Math.sin(i / 800) * 50 + 50}")
+  #      f.updatev("#{rrddir}/#{rrd}", "#{i}:#{rand(100)}:#{Math.sin(i / 800) * 50 + 50}")
   #   }
   def updatev(filename,*args)
-    system("#{@rrdcmd} updatev #{filename} #{args.join(' ')}")
-  rescue Exception => e 
-    puts e.message 
+    %x{#{@rrdcmd} update #{filename} #{args.join(' ')}}
+  rescue Exception => e
+    puts e.message
     puts e.backtrace.inspect
   end
 
   # Graph a Round Robin Database
   #
   #  graph(filename,[option ...],[data definition ...],[data calculation ...],[variable definition ...],[graph element ...],[print element ...])
-  # 
+  #
   #  This method uses standard rrdtool graph arguments separated by commas. Refer to the rrdtool documentation for details.
   #
   #  Ruby variables can be used.
-  # 
+  #
   # === Example
   #   name = "test"
-  #   rrdpath = '\projects\rrdtool'
-  #   rrddir = "#{rrdpath}\\rra"
+  #   rrdpath = '/projects/rrdtool'
+  #   rrddir = "#{rrdpath}/rra"
   #   rrd = "#{name}.rrd"
   #   xml = "#{name}.xml"
   #   start = Time.now.to_i
   #   rrdend = start + 1000*60
   #   png = "#{name}.png"
   #  f.graph(
-  #  "#{rrddir}\\#{png}",
-  #  "--title", " \"RubyRRD Demo\"",
+  #  "#{rrddir}/#{png}",
+  #  "--title", " /"RubyRRD Demo/"",
   #  "--start", "#{start+3600}",
   #  "--end", "#{rrdend}",
   #  "--interlace",
   #  "--imgformat", "PNG",
   #  "--width=450",
-  #  "DEF:a=#{rrddir}\\#{rrd}:a:AVERAGE",
-  #  "DEF:b=#{rrddir}\\#{rrd}:b:AVERAGE",
+  #  "DEF:a=#{rrddir}/#{rrd}:a:AVERAGE",
+  #  "DEF:b=#{rrddir}/#{rrd}:b:AVERAGE",
   #  "CDEF:line=TIME,2400,%,300,LT,a,UNKN,IF",
   #  "AREA:b#00b6e4:beta",
   #  "AREA:line#0022e9:alpha",
   #  "LINE3:line#ff0000")
   def graph(filename,*args)
-    system("#{@rrdcmd} graph #{filename} #{args.join(' ')}")
-  rescue Exception => e 
-    puts e.message 
+    %x{#{@rrdcmd} graph #{filename} #{args.join(' ')}}
+  rescue Exception => e
+    puts e.message
     puts e.backtrace.inspect
   end
 
@@ -169,18 +154,18 @@ class Rrdwrapper
   #  Ruby variables can be used.
   # === Example
   #   name = "test"
-  #   rrdpath = '\projects\rrdtool'
-  #   rrddir = "#{rrdpath}\\rra"
+  #   rrdpath = '/projects/rrdtool'
+  #   rrddir = "#{rrdpath}/rra"
   #   rrd = "#{name}.rrd"
   #   xml = "#{name}.xml"
-  #  f.dump("#{rrddir}\\#{rrd}","#{rrddir}\\#{xml}")
+  #  f.dump("#{rrddir}/#{rrd}","#{rrddir}/#{xml}")
   def dump(filename,xmlfilename)
     xmlarray = %x[#{@rrdcmd} dump #{filename}]
     f = File.open("#{xmlfilename}", "w")
     xmlarray.each { |line| f.puts line }
-    f.close 
-  rescue Exception => e 
-    puts e.message 
+    f.close
+  rescue Exception => e
+    puts e.message
     puts e.backtrace.inspect
   end
 
@@ -193,15 +178,15 @@ class Rrdwrapper
   #  Ruby variables can be used.
   # === Example
   #   name = "test"
-  #   rrdpath = '\projects\rrdtool'
-  #   rrddir = "#{rrdpath}\\rra"
+  #   rrdpath = '/projects/rrdtool'
+  #   rrddir = "#{rrdpath}/rra"
   #   rrd = "#{name}.rrd"
   #   xml = "#{name}.xml"
-  #   f.restore("#{rrddir}\\#{xml}", "#{rrddir}\\new.rrd")
+  #   f.restore("#{rrddir}/#{xml}", "#{rrddir}/new.rrd")
   def restore(xmlfilename,rrdfilename,*args)
-    system("#{@rrdcmd} restore #{xmlfilename} #{rrdfilename} #{args.join(' ')}")
-  rescue Exception => e 
-    puts e.message 
+    %x{#{@rrdcmd} restore #{xmlfilename} #{rrdfilename} #{args.join(' ')}}
+  rescue Exception => e
+    puts e.message
     puts e.backtrace.inspect
   end
 
@@ -214,19 +199,19 @@ class Rrdwrapper
   #  Ruby variables can be used.
   # === Example
   #  name = "test"
-  #  rrdpath = '\tmp'
-  #  rrddir = "#{rrdpath}\\rra"
+  #  rrdpath = '/tmp'
+  #  rrddir = "#{rrdpath}/rra"
   #  rrd = "#{name}.rrd"
   #  xml = "#{name}.xml"
   #  start = Time.now.to_i
-  #  data = f.fetch("#{rrddir}\\#{rrd}", "AVERAGE", "--start", start.to_s, "--end",(start + 10000).to_s)
+  #  data = f.fetch("#{rrddir}/#{rrd}", "AVERAGE", "--start", start.to_s, "--end",(start + 10000).to_s)
   #  puts "got #{data.length} data points"     # from #{fstart} to #{fend}"
   #  puts data
 
   def fetch(filename,cf,*args)
     %x[#{@rrdcmd} fetch #{filename} #{cf} #{args.join(' ')}].to_a
-  rescue Exception => e 
-    puts e.message 
+  rescue Exception => e
+    puts e.message
     puts e.backtrace.inspect
   end
 
@@ -239,18 +224,18 @@ class Rrdwrapper
   #  Ruby variables can be used.
   # === Example
   #   name = "test"
-  #   rrdpath = '\projects\rrdtool'
-  #   rrddir = "#{rrdpath}\\rra"
+  #   rrdpath = '/projects/rrdtool'
+  #   rrddir = "#{rrdpath}/rra"
   #   rrd = "#{name}.rrd"
   #   xml = "#{name}.xml"
-  #   f.first("#{rrddir}\\#{rrd}")
+  #   f.first("#{rrddir}/#{rrd}")
   def first(filename,*args)
-    system("#{@rrdcmd} first #{filename} #{args.join(' ')}")
-  rescue Exception => e 
-    puts e.message 
-    puts e.backtrace.inspect    
+    %x{#{@rrdcmd} first #{filename} #{args.join(' ')}}
+  rescue Exception => e
+    puts e.message
+    puts e.backtrace.inspect
   end
- 
+
   # Return the date of the last data sample in an RRD
   #
   #  last filename)
@@ -260,15 +245,15 @@ class Rrdwrapper
   #  Ruby variables can be used.
   # === Example
   #   name = "test"
-  #   rrdpath = '\projects\rrdtool'
-  #   rrddir = "#{rrdpath}\\rra"
+  #   rrdpath = '/projects/rrdtool'
+  #   rrddir = "#{rrdpath}/rra"
   #   rrd = "#{name}.rrd"
   #   xml = "#{name}.xml"
-  #   f.last("#{rrddir}\\#{rrd}")
+  #   f.last("#{rrddir}/#{rrd}")
   def last(filename)
-    system("#{@rrdcmd} last #{filename}")
-  rescue Exception => e 
-    puts e.message 
+    %x{#{@rrdcmd} last #{filename}}
+  rescue Exception => e
+    puts e.message
     puts e.backtrace.inspect
   end
 
@@ -281,14 +266,14 @@ class Rrdwrapper
   #  Ruby variables can be used.
   # === Example
   #   name = "test"
-  #   rrdpath = '\projects\rrdtool'
-  #   rrddir = "#{rrdpath}\\rra"
+  #   rrdpath = '/projects/rrdtool'
+  #   rrddir = "#{rrdpath}/rra"
   #   rrd = "#{name}.rrd"
-  #   f.info("#{rrddir}\\#{rrd}")
+  #   f.info("#{rrddir}/#{rrd}")
   def info(filename)
-    system("#{@rrdcmd} info #{filename}")
-  rescue Exception => e 
-    puts e.message 
+    %x{#{@rrdcmd} info #{filename}}
+  rescue Exception => e
+    puts e.message
     puts e.backtrace.inspect
   end
 end

@@ -6,21 +6,12 @@ At present, rrdwrapper has only been tested on win32. It should work with
 minor changes on Linux and Mac. It has been tested with RRDTool v1.2.x.
 I haven't tried it with RRDTool v1.3.x as I can't compile it on win32. :-)
 
+Note: the rrdpath variable cannot use a path with a colon.
+rrdtool uses the colon as a delimiter in some fields.
+The rrdpath needs to be on the same drive where the program is running
+
 TODO - not all rrdtool functions have been implemented
 
 Copyright (c) 2009 Barrie Hill
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-MA 02110-1301, USA.
+License GPL (read LICENSE file for full disclosure)
